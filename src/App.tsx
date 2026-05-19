@@ -695,28 +695,26 @@ Terimakasih telah berbelanja di E4
     try {
       setCartPrintTarget(targetName || null);
       await new Promise(r => setTimeout(r, 300));
-      const el = document.querySelector(".print\\:block") as HTMLElement;
+      const el = document.querySelector(".print\:block") as HTMLElement;
       const notaText = el ? el.innerText : "Nota tidak ditemukan";
-      const { BleClient } = await import("@capacitor-community/bluetooth-le");
-
-      await BleClient.initialize({ androidNeverForLocation: true });
-      const device = await BleClient.requestDevice({
-        optionalServices: ["000018f0-0000-1000-8000-00805f9b34fb"],
-      });
-      await BleClient.connect(device.deviceId);
-      const SERVICE = "000018f0-0000-1000-8000-00805f9b34fb";
-      const CHAR = "00002af1-0000-1000-8000-00805f9b34fb";
+      const { BluetoothSerial } = await import("@e-is/capacitor-bluetooth-serial");
+      const result = await BluetoothSerial.isEnabled();
+      if (!result.enabled) await BluetoothSerial.enable();
+      const devices = await BluetoothSerial.list();
+      const printer = (devices.devices || []).find((d: any) =>
+        d.name && d.name.toUpperCase().includes("RPP")
+      );
+      if (!printer) {
+        alert("Printer RPP02 tidak ditemukan. Pastikan sudah dipasangkan di Bluetooth.");
+        return;
+      }
+      await BluetoothSerial.connect({ address: printer.address });
       let text = "\x1B\x40\x1B\x61\x01\x1B\x45\x01E4 STORE\n\x1B\x45\x00";
       text += "--------------------------------\n\x1B\x61\x00";
       text += notaText;
       text += "\n\n\n\n";
-      const encoder = new TextEncoder();
-      const data = encoder.encode(text);
-      for (let i = 0; i < data.length; i += 20) {
-        const chunk = data.slice(i, i + 20);
-        await BleClient.write(device.deviceId, SERVICE, CHAR, new DataView(chunk.buffer));
-      }
-      await BleClient.disconnect(device.deviceId);
+      await BluetoothSerial.write({ value: text });
+      await BluetoothSerial.disconnect();
       alert("Berhasil print!");
     } catch (e: any) {
       alert("Error print: " + e.message);
@@ -724,8 +722,6 @@ Terimakasih telah berbelanja di E4
       setCartPrintTarget(null);
     }
   };
-
-  const handleSendNotaWa = () => {
     let p = targetPhone;
     if (!p) return alert("Pilih nomor tujuan dulu (di tab Pesan WA atau ketik nomornya)");
     
