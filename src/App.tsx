@@ -695,14 +695,15 @@ Terimakasih telah berbelanja di E4
     try {
       setCartPrintTarget(targetName || null);
       await new Promise(r => setTimeout(r, 300));
-      const { BluetoothSerial } = await import("@e-is/capacitor-bluetooth-serial");
-      const enabled = await BluetoothSerial.isEnabled();
-      if (!enabled.enabled) await BluetoothSerial.enable();
-      const paired = await BluetoothSerial.list();
-      const allDevices = paired.devices || [];
-      const printer = allDevices.find((d: any) => d.name?.toUpperCase().includes("RPP") || d.name?.toUpperCase().includes("POS") || d.name?.toUpperCase().includes("PRINT")) || allDevices[0];
-      if (!printer) { alert("Printer tidak ditemukan. Pastikan sudah dipasangkan di Settings Bluetooth."); setCartPrintTarget(null); return; }
-      await BluetoothSerial.connect({ address: printer.address });
+      const { BleClient } = await import("@capacitor-community/bluetooth-le");
+      await BleClient.initialize({ androidNeverForLocation: true });
+      const device = await BleClient.requestDevice({
+        optionalServices: ["000018f0-0000-1000-8000-00805f9b34fb"],
+        allowDuplicates: false,
+      });
+      await BleClient.connect(device.deviceId);
+      const SERVICE = "000018f0-0000-1000-8000-00805f9b34fb";
+      const CHAR = "00002af1-0000-1000-8000-00805f9b34fb";
       const tab = activeTab;
       let text = "\x1B\x40";
       text += "\x1B\x61\x01\x1B\x45\x01E4 STORE\x1B\x45\x00\n";
@@ -737,8 +738,13 @@ Terimakasih telah berbelanja di E4
       }
       text += "--------------------------------\n";
       text += "\x1B\x61\x01Terima kasih!\n\n\n\n";
-      await BluetoothSerial.write({ value: text });
-      await BluetoothSerial.disconnect();
+      const encoder = new TextEncoder();
+      const data = encoder.encode(text);
+      for (let i = 0; i < data.length; i += 20) {
+        const chunk = data.slice(i, i + 20);
+        await BleClient.write(device.deviceId, SERVICE, CHAR, new DataView(chunk.buffer));
+      }
+      await BleClient.disconnect(device.deviceId);
       alert("Berhasil print!");
     } catch (e: any) {
       alert("Error print: " + e.message);
