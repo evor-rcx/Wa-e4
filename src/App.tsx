@@ -607,24 +607,28 @@ export default function App() {
 
   const handleReadContacts = async () => {
     try {
-      if ('contacts' in navigator && 'ContactsManager' in window) {
-        const props = ['name', 'tel'];
-        const opts = { multiple: false };
-        // @ts-ignore
-        const contacts = await navigator.contacts.select(props, opts);
-        if (contacts.length > 0 && contacts[0].tel && contacts[0].tel.length > 0) {
-           let p = contacts[0].tel[0];
-           p = p.replace(/\D/g, '');
-           if (p.startsWith('0')) p = '62' + p.substring(1);
-           if (!p.startsWith('62')) p = '62' + p;
-           setTargetPhone(p);
-        }
-      } else {
-        alert("Browser atau perangkat ini tidak mendukung fitur membaca kontak langsung.");
+      const { Contacts } = await import('@capacitor-community/contacts');
+      const permission = await Contacts.requestPermissions();
+      if (permission.contacts !== 'granted') {
+        alert("Izin kontak ditolak.");
+        return;
       }
+      const result = await Contacts.getContacts({
+        projection: { name: true, phones: true }
+      });
+      const contacts = result.contacts.filter((c: any) => c.phones && c.phones.length > 0);
+      if (contacts.length === 0) {
+        alert("Tidak ada kontak dengan nomor telepon.");
+        return;
+      }
+      const chosen = contacts[0];
+      let p = chosen.phones[0].number || '';
+      p = p.replace(/\D/g, '');
+      if (p.startsWith('0')) p = '62' + p.substring(1);
+      if (!p.startsWith('62')) p = '62' + p;
+      setTargetPhone(p);
     } catch (ex) {
-      console.log(ex);
-      alert("Gagal membaca kontak. Pastikan Anda memberikan izin.");
+      alert("Error: " + ex);
     }
   };
 
