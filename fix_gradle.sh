@@ -1,0 +1,12 @@
+#!/bin/bash
+FILE="android/build.gradle"
+cat >> $FILE << 'GRADLE'
+
+configurations.all {
+    resolutionStrategy {
+        force 'org.jetbrains.kotlin:kotlin-stdlib:1.8.22'
+        force 'org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.8.22'
+        force 'org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.8.22'
+    }
+}
+GRADLE
