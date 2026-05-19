@@ -701,7 +701,7 @@ Terimakasih telah berbelanja di E4
 
       await BleClient.initialize({ androidNeverForLocation: true });
       const device = await BleClient.requestDevice({
-        services: ["000018f0-0000-1000-8000-00805f9b34fb"],
+        optionalServices: ["000018f0-0000-1000-8000-00805f9b34fb"],
       });
       await BleClient.connect(device.deviceId);
       const SERVICE = "000018f0-0000-1000-8000-00805f9b34fb";
