@@ -15,6 +15,12 @@ jobs:
         with:
           node-version: '20'
 
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+
       - name: Clean install dependencies
         run: |
           rm -rf node_modules package-lock.json
@@ -32,11 +38,24 @@ jobs:
           npx cap add android
           npx cap sync
 
-      - name: Setup Java
-        uses: actions/setup-java@v4
-        with:
-          java-version: '17'
-          distribution: 'temurin'
+      - name: Set APK Icon
+        run: |
+          sudo apt-get install -y imagemagick
+          mkdir -p android/app/src/main/res/mipmap-mdpi
+          mkdir -p android/app/src/main/res/mipmap-hdpi
+          mkdir -p android/app/src/main/res/mipmap-xhdpi
+          mkdir -p android/app/src/main/res/mipmap-xxhdpi
+          mkdir -p android/app/src/main/res/mipmap-xxxhdpi
+          convert public/logo.jpg -resize 48x48 android/app/src/main/res/mipmap-mdpi/ic_launcher.png
+          convert public/logo.jpg -resize 72x72 android/app/src/main/res/mipmap-hdpi/ic_launcher.png
+          convert public/logo.jpg -resize 96x96 android/app/src/main/res/mipmap-xhdpi/ic_launcher.png
+          convert public/logo.jpg -resize 144x144 android/app/src/main/res/mipmap-xxhdpi/ic_launcher.png
+          convert public/logo.jpg -resize 192x192 android/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png
+          convert public/logo.jpg -resize 48x48 android/app/src/main/res/mipmap-mdpi/ic_launcher_round.png
+          convert public/logo.jpg -resize 72x72 android/app/src/main/res/mipmap-hdpi/ic_launcher_round.png
+          convert public/logo.jpg -resize 96x96 android/app/src/main/res/mipmap-xhdpi/ic_launcher_round.png
+          convert public/logo.jpg -resize 144x144 android/app/src/main/res/mipmap-xxhdpi/ic_launcher_round.png
+          convert public/logo.jpg -resize 192x192 android/app/src/main/res/mipmap-xxxhdpi/ic_launcher_round.png
 
       - name: Build APK
         run: |
