@@ -621,11 +621,22 @@ export default function App() {
         alert("Tidak ada kontak dengan nomor telepon.");
         return;
       }
-      const chosen = contacts[0];
-      let p = chosen.phones[0].number || '';
-      p = p.replace(/\D/g, '');
-      if (p.startsWith('0')) p = '62' + p.substring(1);
-      if (!p.startsWith('62')) p = '62' + p;
+      const options = contacts.slice(0, 50).map((c: any) => {
+        const name = c.name?.display || c.name?.given || "Tanpa Nama";
+        const phone = c.phones[0].number || "";
+        return `${name} - ${phone}`;
+      });
+      const choice = window.prompt("Pilih kontak (ketik nomor urut 1-" + options.length + "):\n" + options.map((o: string, i: number) => `${i+1}. ${o}`).join("\n"));
+      if (!choice) return;
+      const idx = parseInt(choice) - 1;
+      if (isNaN(idx) || idx < 0 || idx >= contacts.length) {
+        alert("Nomor tidak valid.");
+        return;
+      }
+      let p = contacts[idx].phones[0].number || "";
+      p = p.replace(/\D/g, "");
+      if (p.startsWith("0")) p = "62" + p.substring(1);
+      if (!p.startsWith("62")) p = "62" + p;
       setTargetPhone(p);
     } catch (ex) {
       alert("Error: " + ex);
