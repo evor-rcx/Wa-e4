@@ -722,6 +722,7 @@ Terimakasih telah berbelanja di E4
       setCartPrintTarget(null);
     }
   };
+  const handleSendNotaWa = () => {
     let p = targetPhone;
     if (!p) return alert("Pilih nomor tujuan dulu (di tab Pesan WA atau ketik nomornya)");
     
@@ -733,6 +734,7 @@ Terimakasih telah berbelanja di E4
     const url = `https://api.whatsapp.com/send?phone=${p}&text=${encodeURIComponent(m)}`;
     window.open(url, '_blank');
   };
+
 
   const handleResetPasca = () => {
     setPascaIdPel('');
