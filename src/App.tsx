@@ -684,7 +684,7 @@ Terimakasih telah berbelanja di E4
          alert("Terkadang fitur Cetak (Print) tidak merespon di mode preview. Jika tidak muncul, silakan buka aplikasi di Tab Baru (klik ikon ↗) baru klik Print lagi.");
       }
       setTimeout(() => {
-        window.print();
+        if (navigator.share) { navigator.share({ title: "Nota E4 Store", text: document.querySelector(".print\\:block")?.innerText || "Nota" }); } else { window.print(); }
         setTimeout(() => setCartPrintTarget(null), 500); // reset after print dialog is triggered
       }, 100);
     } catch (e) {
