@@ -698,7 +698,12 @@ Terimakasih telah berbelanja di E4
       const el = document.querySelector(".print\\:block") as HTMLElement;
       const notaText = el ? el.innerText : "Nota tidak ditemukan";
       const { BleClient } = await import("@capacitor-community/bluetooth-le");
-      await BleClient.initialize();
+      const { Plugins } = await import("@capacitor/core");
+      const { Permissions } = Plugins as any;
+      try {
+        await (Permissions as any).request({ name: "bluetooth" });
+      } catch(_) {}
+      await BleClient.initialize({ androidNeverForLocation: true });
       const device = await BleClient.requestDevice({
         services: ["000018f0-0000-1000-8000-00805f9b34fb"],
       });
