@@ -684,7 +684,7 @@ Terimakasih telah berbelanja di E4
          alert("Terkadang fitur Cetak (Print) tidak merespon di mode preview. Jika tidak muncul, silakan buka aplikasi di Tab Baru (klik ikon ↗) baru klik Print lagi.");
       }
       setTimeout(() => {
-        printViaBluetooth({ orderId: notaOrderId, tanggal: notaTanggal, idPel: notaIdPel, nama: notaNama, items: [], total: notaTotal, paymentStatus: "" });
+        window.print();
         setTimeout(() => setCartPrintTarget(null), 500); // reset after print dialog is triggered
       }, 100);
     } catch (e) {
