@@ -695,34 +695,47 @@ Terimakasih telah berbelanja di E4
     try {
       setCartPrintTarget(targetName || null);
       await new Promise(r => setTimeout(r, 300));
-      // Buat teks nota dari state
-      const tab = activeTab;
-      let notaText = "";
-      if (tab === "nota") {
-        notaText = `E4 STORE\n================================\nNOTA TOKEN PLN\n================================\nOrder ID : ${notaOrderId}\nTanggal  : ${notaTanggal}\nID Pel   : ${notaIdPel}\nMeter    : ${notaMeter}\nNama     : ${notaNama}\n--------------------------------\nTOKEN:\n${notaToken}\n--------------------------------\nDaya     : ${notaDaya}\nPaket    : ${notaPembelian}\nSubtotal : ${notaSubtotal}\nTotal    : Rp ${notaTotal}\n================================\nTerima kasih!`;
-      } else if (tab === "pasca") {
-        notaText = `E4 STORE\n================================\nNOTA PASCA BAYAR\n================================\nOrder ID : ${notaPulsaOrderId || ""}\nTanggal  : ${notaTanggal}\nID Pel   : ${pascaIdPel}\nNama     : ${pascaNama}\nPeriode  : ${pascaPeriode}\nTagihan  : Rp ${pascaTagihan}\nAdmin    : Rp ${pascaAdmin}\nTotal    : Rp ${pascaTotal}\n================================\nTerima kasih!`;
-      } else if (tab === "pulsa") {
-        notaText = `E4 STORE\n================================\nNOTA PULSA\n================================\nOrder ID : ${notaPulsaOrderId || ""}\nTanggal  : ${notaTanggal}\nNomor    : ${notaPulsaPhone || ""}\nNominal  : ${notaPulsaItem || ""}\nTotal    : Rp ${notaPulsaTotal || ""}\n================================\nTerima kasih!`;
-      } else {
-        notaText = `E4 STORE\n================================\nNOTA TRANSAKSI\n================================\nTanggal  : ${notaTanggal}\n================================\nTerima kasih!`;
-      }
       const { BluetoothSerial } = await import("@e-is/capacitor-bluetooth-serial");
-      const result = await BluetoothSerial.isEnabled();
-      if (!result.enabled) await BluetoothSerial.enable();
-      const devices = await BluetoothSerial.list();
-      const printer = (devices.devices || []).find((d: any) =>
-        d.name && d.name.toUpperCase().includes("RPP")
-      );
-      if (!printer) {
-        alert("Printer RPP02 tidak ditemukan. Pastikan sudah dipasangkan di Bluetooth.");
-        return;
-      }
+      const enabled = await BluetoothSerial.isEnabled();
+      if (!enabled.enabled) await BluetoothSerial.enable();
+      const paired = await BluetoothSerial.list();
+      const printer = (paired.devices || []).find((d: any) => d.address === "00:11:22:33:44:55" || d.name?.toUpperCase().includes("RPP") || d.name?.toUpperCase().includes("EPPOS") || d.name?.toUpperCase().includes("POS") || d.name?.toUpperCase().includes("PRINT"));
+      if (!printer) { alert("Printer tidak ditemukan. Pastikan sudah dipasangkan di Settings Bluetooth."); setCartPrintTarget(null); return; }
       await BluetoothSerial.connect({ address: printer.address });
-      let text = "\x1B\x40\x1B\x61\x01\x1B\x45\x01E4 STORE\n\x1B\x45\x00";
+      const tab = activeTab;
+      let text = "\x1B\x40";
+      text += "\x1B\x61\x01\x1B\x45\x01E4 STORE\x1B\x45\x00\n";
       text += "--------------------------------\n\x1B\x61\x00";
-      text += notaText;
-      text += "\n\n\n\n";
+      if (tab === "nota") {
+        text += "NOTA TOKEN PLN\n";
+        text += "Order : " + notaOrderId + "\n";
+        text += "Tgl   : " + notaTanggal + "\n";
+        text += "Nama  : " + notaNama + "\n";
+        text += "Meter : " + notaMeter + "\n";
+        text += "Token : " + notaToken + "\n";
+        text += "Daya  : " + notaDaya + "\n";
+        text += "Total : Rp " + notaTotal + "\n";
+      } else if (tab === "pasca") {
+        text += "NOTA PASCA BAYAR\n";
+        text += "Tgl    : " + notaTanggal + "\n";
+        text += "ID Pel : " + pascaIdPel + "\n";
+        text += "Nama   : " + pascaNama + "\n";
+        text += "Periode: " + pascaPeriode + "\n";
+        const totalPasca = (Number(pascaTagihan)||0) + (Number(pascaAdmin)||0);
+        text += "Total  : Rp " + totalPasca.toLocaleString('id-ID') + "\n";
+      } else if (tab === "pulsa") {
+        text += "NOTA PULSA\n";
+        text += "Tgl    : " + notaTanggal + "\n";
+        text += "No HP  : " + notaPulsaPhone + "\n";
+        text += "Item   : " + notaPulsaItem + "\n";
+        text += "Total  : Rp " + notaPulsaTotal + "\n";
+      } else {
+        text += "NOTA TRANSAKSI\n";
+        text += "Tgl    : " + notaTanggal + "\n";
+        text += "Total  : Rp " + notaTotal + "\n";
+      }
+      text += "--------------------------------\n";
+      text += "\x1B\x61\x01Terima kasih!\n\n\n\n";
       await BluetoothSerial.write({ value: text });
       await BluetoothSerial.disconnect();
       alert("Berhasil print!");
@@ -731,7 +744,7 @@ Terimakasih telah berbelanja di E4
     } finally {
       setCartPrintTarget(null);
     }
-  };
+  }
   const handleSendNotaWa = () => {
     let p = targetPhone;
     if (!p) return alert("Pilih nomor tujuan dulu (di tab Pesan WA atau ketik nomornya)");
