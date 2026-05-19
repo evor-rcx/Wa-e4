@@ -691,16 +691,37 @@ Terimakasih telah berbelanja di E4
 ------------------------------------`;
   };
 
-  const handlePrint = (targetName?: string) => {
+  const handlePrint = async (targetName?: string) => {
     try {
       setCartPrintTarget(targetName || null);
-      setTimeout(() => {
-        window.print();
-        setTimeout(() => setCartPrintTarget(null), 500);
-      }, 300);
-    } catch (e) {
-      console.log(e);
-      alert("Error saat mencetak");
+      await new Promise(r => setTimeout(r, 300));
+      const el = document.querySelector(".print\\:block") as HTMLElement;
+      const text = el ? el.innerText : "Nota tidak ditemukan";
+      const { BluetoothSerial } = await import("@e-is/capacitor-bluetooth-serial");
+      const { devices } = await BluetoothSerial.list();
+      if (!devices || devices.length === 0) {
+        alert("Tidak ada perangkat bluetooth terpasang. Pasangkan printer EPPOS dulu di pengaturan bluetooth HP.");
+        setCartPrintTarget(null);
+        return;
+      }
+      const printer = devices.find((d: any) => d.name?.toUpperCase().includes("EPPOS") || d.name?.toUpperCase().includes("PRINT")) || devices[0];
+      await BluetoothSerial.connect({ address: printer.address });
+      const ESC = "\x1B";
+      const GS = "\x1D";
+      const init = ESC + "@";
+      const center = ESC + "a\x01";
+      const left = ESC + "a\x00";
+      const bold = ESC + "E\x01";
+      const boldOff = ESC + "E\x00";
+      const cut = GS + "V\x41\x00";
+      const printData = init + center + bold + "E4 STORE\n" + boldOff + left + text + "\n\n\n" + cut;
+      await BluetoothSerial.write({ value: printData });
+      await BluetoothSerial.disconnect();
+      alert("Berhasil print!");
+    } catch (e: any) {
+      alert("Error print: " + e.message);
+    } finally {
+      setCartPrintTarget(null);
     }
   };
 
