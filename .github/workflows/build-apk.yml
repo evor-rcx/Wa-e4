@@ -34,6 +34,7 @@ jobs:
       - name: Install Capacitor
         run: |
           npm install @capacitor/core @capacitor/cli @capacitor/android
+          rm -f capacitor.config.ts
           npx cap init "WA E4" "com.evor.wae4" --web-dir=dist
           npx cap add android
           npx cap sync
