@@ -699,7 +699,8 @@ Terimakasih telah berbelanja di E4
       const enabled = await BluetoothSerial.isEnabled();
       if (!enabled.enabled) await BluetoothSerial.enable();
       const paired = await BluetoothSerial.list();
-      const printer = (paired.devices || []).find((d: any) => d.address === "00:11:22:33:44:55" || d.name?.toUpperCase().includes("RPP") || d.name?.toUpperCase().includes("EPPOS") || d.name?.toUpperCase().includes("POS") || d.name?.toUpperCase().includes("PRINT"));
+      const allDevices = paired.devices || [];
+      const printer = allDevices.find((d: any) => d.name?.toUpperCase().includes("RPP") || d.name?.toUpperCase().includes("POS") || d.name?.toUpperCase().includes("PRINT")) || allDevices[0];
       if (!printer) { alert("Printer tidak ditemukan. Pastikan sudah dipasangkan di Settings Bluetooth."); setCartPrintTarget(null); return; }
       await BluetoothSerial.connect({ address: printer.address });
       const tab = activeTab;
