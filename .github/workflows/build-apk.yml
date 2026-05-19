@@ -58,6 +58,19 @@ jobs:
           convert public/logo.jpg -resize 144x144 android/app/src/main/res/mipmap-xxhdpi/ic_launcher_round.png
           convert public/logo.jpg -resize 192x192 android/app/src/main/res/mipmap-xxxhdpi/ic_launcher_round.png
 
+      - name: Fix capacitor-bluetooth-serial namespace
+        run: |
+          MANIFEST="node_modules/capacitor-bluetooth-serial/android/src/main/AndroidManifest.xml"
+          PACKAGE=$(grep -o 'package="[^"]*"' $MANIFEST | cut -d'"' -f2)
+          sed -i "/android {/a\\    namespace \"$PACKAGE\"" node_modules/capacitor-bluetooth-serial/android/build.gradle
+
+
+      - name: Fix capacitor-bluetooth-serial namespace
+        run: |
+          MANIFEST="node_modules/capacitor-bluetooth-serial/android/src/main/AndroidManifest.xml"
+          PACKAGE=$(grep -o 'package="[^"]*"' $MANIFEST | cut -d'"' -f2)
+          sed -i "/android {/a\\    namespace \"$PACKAGE\"" node_modules/capacitor-bluetooth-serial/android/build.gradle
+
       - name: Build APK
         run: |
           cd android
