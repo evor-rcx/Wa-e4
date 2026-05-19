@@ -31,12 +31,9 @@ jobs:
       - name: Build web
         run: npm run build
 
-      - name: Install Capacitor
+      - name: Sync Capacitor
         run: |
           npm install @capacitor/core @capacitor/cli @capacitor/android
-          rm -f capacitor.config.ts
-          npx cap init "WA E4" "com.evor.wae4" --web-dir=dist
-          npx cap add android
           npx cap sync
 
       - name: Add permissions to AndroidManifest
@@ -50,11 +47,6 @@ jobs:
       - name: Set APK Icon
         run: |
           sudo apt-get install -y imagemagick
-          mkdir -p android/app/src/main/res/mipmap-mdpi
-          mkdir -p android/app/src/main/res/mipmap-hdpi
-          mkdir -p android/app/src/main/res/mipmap-xhdpi
-          mkdir -p android/app/src/main/res/mipmap-xxhdpi
-          mkdir -p android/app/src/main/res/mipmap-xxxhdpi
           convert public/logo.jpg -resize 48x48 android/app/src/main/res/mipmap-mdpi/ic_launcher.png
           convert public/logo.jpg -resize 72x72 android/app/src/main/res/mipmap-hdpi/ic_launcher.png
           convert public/logo.jpg -resize 96x96 android/app/src/main/res/mipmap-xhdpi/ic_launcher.png
