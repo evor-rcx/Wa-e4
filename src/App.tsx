@@ -1,3 +1,4 @@
+import { printViaBluetooth } from "./bluetoothPrint";
 import React, { useEffect, useState } from 'react';
 import { Send, Plus, X, Trash2, ReceiptText, MessageCircle, Printer, Gamepad2, RefreshCw, Search, Smartphone, BookUser } from 'lucide-react';
 import { collection, onSnapshot, addDoc, deleteDoc, doc, serverTimestamp, query } from 'firebase/firestore';
@@ -683,7 +684,7 @@ Terimakasih telah berbelanja di E4
          alert("Terkadang fitur Cetak (Print) tidak merespon di mode preview. Jika tidak muncul, silakan buka aplikasi di Tab Baru (klik ikon ↗) baru klik Print lagi.");
       }
       setTimeout(() => {
-        window.print();
+        printViaBluetooth({ orderId: notaOrderId, tanggal: notaTanggal, idPel: notaIdPel, nama: notaNama, items: [], total: notaTotal, paymentStatus: "" });
         setTimeout(() => setCartPrintTarget(null), 500); // reset after print dialog is triggered
       }, 100);
     } catch (e) {
