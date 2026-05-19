@@ -1,0 +1,6 @@
+{
+  "name": "E4 wa massenger",
+  "description": "A WhatsApp messenger interface with cloud contact synchronization.",
+  "requestFramePermissions": [],
+  "majorCapabilities": []
+}

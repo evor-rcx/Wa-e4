@@ -1,0 +1,36 @@
+{
+  "entities": {
+    "Contact": {
+      "title": "Contact",
+      "description": "A contact added by a user.",
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Name of the contact"
+        },
+        "phone": {
+          "type": "string",
+          "description": "Phone number, formatted without leading zeroes/country codes"
+        },
+        "created": {
+          "type": "timestamp",
+          "description": "Creation timestamp"
+        },
+        "userId": {
+          "type": "string",
+          "description": "ID of the user who created this contact"
+        }
+      },
+      "required": ["name", "phone", "created", "userId"]
+    }
+  },
+  "firestore": {
+    "contacts": {
+      "schema": {
+        "$ref": "#/entities/Contact"
+      },
+      "description": "Collection of user-added contacts."
+    }
+  }
+}
