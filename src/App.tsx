@@ -1,4 +1,4 @@
-import { printViaBluetooth } from "./bluetoothPrint";
+
 import React, { useEffect, useState } from 'react';
 import { Send, Plus, X, Trash2, ReceiptText, MessageCircle, Printer, Gamepad2, RefreshCw, Search, Smartphone, BookUser } from 'lucide-react';
 import { collection, onSnapshot, addDoc, deleteDoc, doc, serverTimestamp, query } from 'firebase/firestore';
