@@ -695,8 +695,18 @@ Terimakasih telah berbelanja di E4
     try {
       setCartPrintTarget(targetName || null);
       await new Promise(r => setTimeout(r, 300));
-      const el = document.querySelector(".print\:block") as HTMLElement;
-      const notaText = el ? el.innerText : "Nota tidak ditemukan";
+      // Buat teks nota dari state
+      const tab = activeTab;
+      let notaText = "";
+      if (tab === "nota") {
+        notaText = `E4 STORE\n================================\nNOTA TOKEN PLN\n================================\nOrder ID : ${notaOrderId}\nTanggal  : ${notaTanggal}\nID Pel   : ${notaIdPel}\nMeter    : ${notaMeter}\nNama     : ${notaNama}\n--------------------------------\nTOKEN:\n${notaToken}\n--------------------------------\nDaya     : ${notaDaya}\nPaket    : ${notaPembelian}\nSubtotal : ${notaSubtotal}\nTotal    : Rp ${notaTotal}\n================================\nTerima kasih!`;
+      } else if (tab === "pasca") {
+        notaText = `E4 STORE\n================================\nNOTA PASCA BAYAR\n================================\nOrder ID : ${notaPulsaOrderId || ""}\nTanggal  : ${notaTanggal}\nID Pel   : ${pascaIdPel}\nNama     : ${pascaNama}\nPeriode  : ${pascaPeriode}\nTagihan  : Rp ${pascaTagihan}\nAdmin    : Rp ${pascaAdmin}\nTotal    : Rp ${pascaTotal}\n================================\nTerima kasih!`;
+      } else if (tab === "pulsa") {
+        notaText = `E4 STORE\n================================\nNOTA PULSA\n================================\nOrder ID : ${notaPulsaOrderId || ""}\nTanggal  : ${notaTanggal}\nNomor    : ${notaPulsaPhone || ""}\nNominal  : ${notaPulsaItem || ""}\nTotal    : Rp ${notaPulsaTotal || ""}\n================================\nTerima kasih!`;
+      } else {
+        notaText = `E4 STORE\n================================\nNOTA TRANSAKSI\n================================\nTanggal  : ${notaTanggal}\n================================\nTerima kasih!`;
+      }
       const { BluetoothSerial } = await import("@e-is/capacitor-bluetooth-serial");
       const result = await BluetoothSerial.isEnabled();
       if (!result.enabled) await BluetoothSerial.enable();
