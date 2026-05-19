@@ -696,27 +696,26 @@ Terimakasih telah berbelanja di E4
       setCartPrintTarget(targetName || null);
       await new Promise(r => setTimeout(r, 300));
       const el = document.querySelector(".print\\:block") as HTMLElement;
-      const text = el ? el.innerText : "Nota tidak ditemukan";
-      const { BluetoothSerial } = await import("@e-is/capacitor-bluetooth-serial");
-      const { devices } = await BluetoothSerial.list();
-      if (!devices || devices.length === 0) {
-        alert("Tidak ada perangkat bluetooth terpasang. Pasangkan printer EPPOS dulu di pengaturan bluetooth HP.");
-        setCartPrintTarget(null);
-        return;
+      const notaText = el ? el.innerText : "Nota tidak ditemukan";
+      const { BleClient } = await import("@capacitor-community/bluetooth-le");
+      await BleClient.initialize();
+      const device = await BleClient.requestDevice({
+        services: ["000018f0-0000-1000-8000-00805f9b34fb"],
+      });
+      await BleClient.connect(device.deviceId);
+      const SERVICE = "000018f0-0000-1000-8000-00805f9b34fb";
+      const CHAR = "00002af1-0000-1000-8000-00805f9b34fb";
+      let text = "\x1B\x40\x1B\x61\x01\x1B\x45\x01E4 STORE\n\x1B\x45\x00";
+      text += "--------------------------------\n\x1B\x61\x00";
+      text += notaText;
+      text += "\n\n\n\n";
+      const encoder = new TextEncoder();
+      const data = encoder.encode(text);
+      for (let i = 0; i < data.length; i += 20) {
+        const chunk = data.slice(i, i + 20);
+        await BleClient.write(device.deviceId, SERVICE, CHAR, new DataView(chunk.buffer));
       }
-      const printer = devices.find((d: any) => d.name?.toUpperCase().includes("EPPOS") || d.name?.toUpperCase().includes("PRINT")) || devices[0];
-      await BluetoothSerial.connect({ address: printer.address });
-      const ESC = "\x1B";
-      const GS = "\x1D";
-      const init = ESC + "@";
-      const center = ESC + "a\x01";
-      const left = ESC + "a\x00";
-      const bold = ESC + "E\x01";
-      const boldOff = ESC + "E\x00";
-      const cut = GS + "V\x41\x00";
-      const printData = init + center + bold + "E4 STORE\n" + boldOff + left + text + "\n\n\n" + cut;
-      await BluetoothSerial.write({ value: printData });
-      await BluetoothSerial.disconnect();
+      await BleClient.disconnect(device.deviceId);
       alert("Berhasil print!");
     } catch (e: any) {
       alert("Error print: " + e.message);
