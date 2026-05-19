@@ -38,6 +38,10 @@ jobs:
           npx cap add android
           npx cap sync
 
+      - name: Add permissions to AndroidManifest
+        run: |
+          sed -i 's|<uses-permission android:name="android.permission.INTERNET" />|<uses-permission android:name="android.permission.INTERNET" />\n    <uses-permission android:name="android.permission.READ_CONTACTS" />\n    <uses-permission android:name="android.permission.BLUETOOTH" />\n    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />\n    <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />\n    <uses-permission android:name="android.permission.BLUETOOTH_SCAN" />|' android/app/src/main/AndroidManifest.xml
+
       - name: Fix Kotlin duplicate classes
         run: |
           sed -i '/^dependencies {/a\    constraints {\n        implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.8.22") { because("fix duplicate") }\n        implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.8.22") { because("fix duplicate") }\n    }' android/app/build.gradle
