@@ -706,6 +706,8 @@ Terimakasih telah berbelanja di E4
       const CHAR = '00002af1-0000-1000-8000-00805f9b34fb';
       const tab = activeTab;
       let text = "\x1B\x40\x1B\x61\x01\x1B\x45\x01E4 STORE\x1B\x45\x00\n";
+      text += "Jl. Zamrud Depan Zamrud 2 RT 42\n";
+      text += "WA: 6285169949218\n";
       text += "--------------------------------\n\x1B\x61\x00";
       if (tab === "nota") {
         text += "NOTA TOKEN PLN\n";
