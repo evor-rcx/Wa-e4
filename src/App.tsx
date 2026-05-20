@@ -1246,7 +1246,7 @@ Status        : ${paymentStatus}`;
                   >
                     <option value="" disabled>Pilih Paket Otomatis...</option>
                     {plnProducts.map((opt, i) => (
-                      <option key={opt.id || i} value={opt.pembelian}>{opt.label}</option>
+                      <option key={i} value={opt.pembelian}>{opt.label}</option>
                     ))}
                   </select>
                 </div>
@@ -1389,7 +1389,7 @@ Status        : ${paymentStatus}`;
                   >
                     <option value="" disabled>Pilih (Opsional)...</option>
                     {(pascaType === 'pln' ? listrikPascaProducts : pdamProducts).map((opt, i) => (
-                      <option key={opt.id || i} value={opt.pembelian}>{opt.label}</option>
+                      <option key={i} value={opt.pembelian}>{opt.label}</option>
                     ))}
                   </select>
                 </div>
@@ -1525,7 +1525,7 @@ Status        : ${paymentStatus}`;
                 >
                   <option value="" disabled>Pilih Paket Free Fire...</option>
                   {ffProducts.map((opt, i) => (
-                    <option key={opt.id || i} value={opt.item}>{opt.label}</option>
+                    <option key={i} value={opt.item}>{opt.label}</option>
                   ))}
                 </select>
               </div>
@@ -1633,7 +1633,7 @@ Status        : ${paymentStatus}`;
                 >
                   <option value="" disabled>Pilih Paket Pulsa/Data...</option>
                   {pulsaProducts.map((opt, i) => (
-                    <option key={opt.id || i} value={opt.item}>{opt.label}</option>
+                    <option key={i} value={opt.item}>{opt.label}</option>
                   ))}
                 </select>
               </div>
