@@ -753,6 +753,17 @@ Terimakasih telah berbelanja di E4
   }
 
 
+  const handleSendNotaWa = () => {
+    let p = targetPhone;
+    if (!p) return alert("Pilih nomor tujuan dulu (di tab Pesan WA atau ketik nomornya)");
+    p = p.replace(/\D/g, '');
+    if (p.startsWith('0')) p = '62' + p.substring(1);
+    if (!p.startsWith('62')) p = '62' + p;
+    const m = generateWaNotaText();
+    const url = `https://api.whatsapp.com/send?phone=${p}&text=${encodeURIComponent(m)}`;
+    window.open(url, '_blank');
+  };
+
   const handleResetPasca = () => {
     setPascaIdPel('');
     setPascaNama('');
