@@ -514,7 +514,8 @@ export default function App() {
     // Load PLN Products
     const plnQuery = query(collection(db, 'products_pln'));
     const unsubPln = onSnapshot(plnQuery, (snapshot) => {
-      if (!snapshot.empty) setPlnProducts(snapshot.docs.map(d => ({ id: d.id, ...d.data() })));
+      const docs = snapshot.docs.map(d => ({ id: d.id, ...d.data() as any }));
+      if (!snapshot.empty && docs[0]?.label) setPlnProducts(docs);
     });
 
     // Load Pulsa
