@@ -47,16 +47,16 @@ jobs:
       - name: Set APK Icon
         run: |
           sudo apt-get install -y imagemagick
-          convert public/logo.jpg -resize 48x48 android/app/src/main/res/mipmap-mdpi/ic_launcher.png
-          convert public/logo.jpg -resize 72x72 android/app/src/main/res/mipmap-hdpi/ic_launcher.png
-          convert public/logo.jpg -resize 96x96 android/app/src/main/res/mipmap-xhdpi/ic_launcher.png
-          convert public/logo.jpg -resize 144x144 android/app/src/main/res/mipmap-xxhdpi/ic_launcher.png
-          convert public/logo.jpg -resize 192x192 android/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png
-          convert public/logo.jpg -resize 48x48 android/app/src/main/res/mipmap-mdpi/ic_launcher_round.png
-          convert public/logo.jpg -resize 72x72 android/app/src/main/res/mipmap-hdpi/ic_launcher_round.png
-          convert public/logo.jpg -resize 96x96 android/app/src/main/res/mipmap-xhdpi/ic_launcher_round.png
-          convert public/logo.jpg -resize 144x144 android/app/src/main/res/mipmap-xxhdpi/ic_launcher_round.png
-          convert public/logo.jpg -resize 192x192 android/app/src/main/res/mipmap-xxxhdpi/ic_launcher_round.png
+          convert public/ic_launcher_mdpi.png -resize 48x48 android/app/src/main/res/mipmap-mdpi/ic_launcher.png
+          convert public/ic_launcher_hdpi.png -resize 72x72 android/app/src/main/res/mipmap-hdpi/ic_launcher.png
+          convert public/ic_launcher_xhdpi.png -resize 96x96 android/app/src/main/res/mipmap-xhdpi/ic_launcher.png
+          convert public/ic_launcher_xxhdpi.png -resize 144x144 android/app/src/main/res/mipmap-xxhdpi/ic_launcher.png
+          convert public/ic_launcher_xxxhdpi.png -resize 192x192 android/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png
+          convert public/ic_launcher_mdpi.png -resize 48x48 android/app/src/main/res/mipmap-mdpi/ic_launcher_round.png
+          convert public/ic_launcher_hdpi.png -resize 72x72 android/app/src/main/res/mipmap-hdpi/ic_launcher_round.png
+          convert public/ic_launcher_xhdpi.png -resize 96x96 android/app/src/main/res/mipmap-xhdpi/ic_launcher_round.png
+          convert public/ic_launcher_xxhdpi.png -resize 144x144 android/app/src/main/res/mipmap-xxhdpi/ic_launcher_round.png
+          convert public/ic_launcher_xxxhdpi.png -resize 192x192 android/app/src/main/res/mipmap-xxxhdpi/ic_launcher_round.png
 
       - name: Build APK
         run: |
