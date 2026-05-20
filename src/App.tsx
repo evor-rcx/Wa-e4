@@ -695,18 +695,16 @@ Terimakasih telah berbelanja di E4
     try {
       setCartPrintTarget(targetName || null);
       await new Promise(r => setTimeout(r, 300));
-      const { BleClient } = await import("@capacitor-community/bluetooth-le");
-      await BleClient.initialize({ androidNeverForLocation: true });
+      const { BleClient } = await import('@capacitor-community/bluetooth-le');
+      await BleClient.initialize();
       const device = await BleClient.requestDevice({
-        optionalServices: ["000018f0-0000-1000-8000-00805f9b34fb"],
-        allowDuplicates: false,
+        services: ['000018f0-0000-1000-8000-00805f9b34fb'],
       });
       await BleClient.connect(device.deviceId);
-      const SERVICE = "000018f0-0000-1000-8000-00805f9b34fb";
-      const CHAR = "00002af1-0000-1000-8000-00805f9b34fb";
+      const SERVICE = '000018f0-0000-1000-8000-00805f9b34fb';
+      const CHAR = '00002af1-0000-1000-8000-00805f9b34fb';
       const tab = activeTab;
-      let text = "\x1B\x40";
-      text += "\x1B\x61\x01\x1B\x45\x01E4 STORE\x1B\x45\x00\n";
+      let text = "\x1B\x40\x1B\x61\x01\x1B\x45\x01E4 STORE\x1B\x45\x00\n";
       text += "--------------------------------\n\x1B\x61\x00";
       if (tab === "nota") {
         text += "NOTA TOKEN PLN\n";
@@ -724,7 +722,7 @@ Terimakasih telah berbelanja di E4
         text += "Nama   : " + pascaNama + "\n";
         text += "Periode: " + pascaPeriode + "\n";
         const totalPasca = (Number(pascaTagihan)||0) + (Number(pascaAdmin)||0);
-        text += "Total  : Rp " + totalPasca.toLocaleString('id-ID') + "\n";
+        text += "Total  : Rp " + totalPasca.toLocaleString("id-ID") + "\n";
       } else if (tab === "pulsa") {
         text += "NOTA PULSA\n";
         text += "Tgl    : " + notaTanggal + "\n";
@@ -752,18 +750,6 @@ Terimakasih telah berbelanja di E4
       setCartPrintTarget(null);
     }
   }
-  const handleSendNotaWa = () => {
-    let p = targetPhone;
-    if (!p) return alert("Pilih nomor tujuan dulu (di tab Pesan WA atau ketik nomornya)");
-    
-    p = p.replace(/\D/g, '');
-    if (p.startsWith('0')) p = '62' + p.substring(1);
-    if (!p.startsWith('62')) p = '62' + p;
-    
-    const m = generateWaNotaText();
-    const url = `https://api.whatsapp.com/send?phone=${p}&text=${encodeURIComponent(m)}`;
-    window.open(url, '_blank');
-  };
 
 
   const handleResetPasca = () => {
