@@ -2031,7 +2031,7 @@ Status        : ${paymentStatus}`;
             <tr>
               <td className="align-top whitespace-nowrap">Pembelian</td>
               <td className="px-1">:</td>
-              <td>{notaPembelian ? Number(notaPembelian).toLocaleString('id-ID') : '0'}</td>
+              <td>{notaPembelian || '0'}</td>
             </tr>
           </tbody>
         </table>
